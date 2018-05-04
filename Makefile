@@ -18,6 +18,9 @@ service-account:
 		--iam-account ${SERVICE_ACCOUNT}@${GCLOUD_PROJECT}.iam.gserviceaccount.com
 
 gke-deploy:
+	kubectl create configmap pubsub-config --from-literal=PROJECT=$(shell gcloud config list project --format="value(core.project)") \
+		--from-literal=PUBSUB_TOPIC=${TOPIC} \
+		--from-literal=PUBSUB_SUBSCRIPTION=${TOPIC}-read
 	kubectl create secret generic pubsub-key --from-file=key.json=${GCLOUD_PROJECT}-${SERVICE_ACCOUNT}.json
 	kubectl apply -f deployment/pubsub-with-secret.yaml
 
